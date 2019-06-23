@@ -1,0 +1,14 @@
+@model System.Linq.IQueryable<SimpleBlog.Models.Entities.Category>
+<div class="collection card with-header">
+    <div class="collection-header">
+        <h5>Categories</h5>
+    </div>
+    <a asp-controller="Post" asp-action="List" class="collection-item 
+@((string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["categoryId"])) ? "active" : "")">All Categories</a>
+    @foreach (var c in Model)
+    {
+        <a asp-controller="Post" asp-action="List" asp-route-categoryId="@c.Id"
+           class="collection-item @((ViewContext.HttpContext.Request.Query["categoryId"] == c.Id) ? "active" : "")">
+            @c.Name</a>
+    }
+</div>

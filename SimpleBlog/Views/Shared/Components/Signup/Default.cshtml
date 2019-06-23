@@ -1,0 +1,37 @@
+@model CreateUserModel
+
+<form asp-controller="Account" asp-action="Signup" method="post">
+    <a href="#!" class="modal-close waves-effect grey-text material-icons right" style="margin-top: 20px; margin-right: 20px">close</a>
+    <div class="modal-content">
+        <div class="center black-text" style="margin-top: 20px;">
+            <h4>Welcome In!</h4>
+        </div>
+        <div class="row" style="margin-bottom: 0px">
+            <div class="input-field col s12">
+                <input id="email" asp-for="Email" type="email" class="black-text validate" required>
+                <label for="email" asp-for="Email">Enter Email</label>
+                @* <span class="helper-text" data-error="Enter valid email"></span> *@
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 0px">
+            <div class="input-field col s12">
+                <input id="name" asp-for="Name" type="text" class="black-text validate" required>
+                <label for="name" asp-for="Name">Enter Username</label>
+                @* <span class="helper-text" data-error="Username should contain at least 3 symbols"></span> *@
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 0px">
+            <div class="input-field col s12">
+                <input id="passw" asp-for="Password" type="password" class="black-text validate" required>
+                <label for="passw" asp-for="Password">Enter Password</label>
+                @* <span class="helper-text" data-error="Password should contain at least 4 symbols"></span> *@
+            </div>
+        </div>
+
+        <button type="submit" class="btn waves-effect waves-light teal lighten-2" style="background-color: #4CAF50; width: 100%;">Sign up</button>
+        <div class="row center-align grey-text" style="border-top: #C6C6C6 solid 2px; margin-top: 30px;">
+            Already have account?
+            <a class="teal-text lighten-2 login" style="display: inline">Sign in!</a>
+        </div>
+    </div>
+</form>

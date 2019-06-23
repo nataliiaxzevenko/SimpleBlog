@@ -1,0 +1,119 @@
+@model PostCreateViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<input type="hidden" id="RequestVerificationToken" 
+       name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+
+<script type="text/javascript" src="~/lib/tinymce/tinymce.min.js"></script>
+<script type="text/javascript">
+    
+    tinymce.init({
+        selector: '#postContent',
+        height: 500,
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor textcolor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount imagetools'
+        ],
+        toolbar:
+            'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link image | removeformat | code | help',
+        content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i'
+        ],
+        images_upload_handler: function (blobInfo, success, failure) {
+            var xhr, formData;
+
+            xhr = new XMLHttpRequest();
+            xhr.open('POST', '/TinyMce/TinyMceUpload');
+            xhr.setRequestHeader("RequestVerificationToken", 
+                document.getElementById('RequestVerificationToken').value);
+
+            xhr.onload = function() {
+                var json;
+
+                if (xhr.status != 200) {
+                    failure('HTTP Error: ' + xhr.status);
+                    return;
+                }
+
+                json = JSON.parse(xhr.responseText);
+
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+
+                success(json.location);
+            };
+
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData);
+        } 
+    });
+    function upload(form) {
+        tinymce.activeEditor.uploadImages(function (success) {
+            form.submit();
+        });
+        return false;
+    }
+</script>
+<div class="card" style="margin-top: 30px">
+    <div class="card-content">
+        <div class="row">
+            <h4 class="black-text">Create a Post</h4>
+            <form autocomplete="off" method="post" class="col s12" asp-action="Create" asp-controller="Post">
+                <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12">
+                        <label asp-for="Title">Title</label>
+                        <input type="text" asp-for="Title" data-length="30">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <label asp-for="Category">Category</label>
+                        <input type="text" asp-for="Category" class="autocomplete">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <textarea id="postContent" asp-for="Content" data-length="250"></textarea>
+                    </div>
+                </div>
+                <div style="margin-top: 10px">
+                    <button class="btn waves-effect waves-light teal lighten-2" type="submit" name="action">
+                        Create
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('input.autocomplete').autocomplete({
+            data: {
+                @foreach (var c in Model.Categories)
+                {
+                    @:"@c.Name": null,
+                }
+            },
+        });
+    });
+</script>

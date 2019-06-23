@@ -1,0 +1,51 @@
+@model CreateUserModel
+
+<div class="container" style="width: 400px; margin-top: 20px">
+    <div class="row">
+        <div class="col s12">
+            <div class="card-panel medium">
+                <form asp-controller="Account" asp-action="Signup" method="post">
+                    <div class="center black-text" style="margin-top: 20px;">
+                        <h4>Welcome In!</h4>
+                    </div>
+                    <div asp-validation-summary="All" class="red-text"></div>
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s12">
+                                <div>
+                                    <span asp-validation-for="Email" class="red-text"></span>
+                                </div>
+                                <input id="uemail" asp-for="Email" type="email" class="black-text validate" required>
+                                <label for="uemail" asp-for="Email">Enter Email</label>
+                                <span class="helper-text" data-error="Enter valid email"></span>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s12">
+                                <div>
+                                    <span asp-validation-for="Name" class="red-text"></span>
+                                </div>
+                                <input id="uname" asp-for="Name" type="text" class="black-text validate" required>
+                                <label for="uname" asp-for="Name">Enter Username</label>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s12">
+                                <div>
+                                    <span asp-validation-for="Password" class="red-text"></span>
+                                </div>
+                                <input id="upassw" asp-for="Password" type="password" class="black-text validate" required>
+                                <label for="upassw">Enter Password</label>
+                                <span class="helper-text" data-error="Password should contain at least 6 symbols"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn waves-effect waves-light teal lighten-2" style="background-color: #4CAF50; width: 100%;">Sign up</button>
+                        <div class="row center-align grey-text" style="border-top: #C6C6C6 solid 2px; margin-top: 30px;">
+                            Already have account?
+                            <a class="teal-text lighten-2" id="login" style="display: inline">Sign in!</a>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

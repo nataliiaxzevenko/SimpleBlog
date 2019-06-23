@@ -1,0 +1,90 @@
+@model PostListViewModel
+<div class="col s3">
+    @await Component.InvokeAsync("CategoryPanel")
+</div>
+<div class="col s9">
+    <div>
+        @foreach (var p in Model.Posts)
+        {
+            <div class="col s12 m7" style="width: 100%">
+                <div class="card">
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <div style="border-bottom: 1px solid #e0e0e0;">
+                                <span class="title"><a asp-action="List" asp-controller="Post" asp-route-categoryId="@p.Category.Id" class="teal-text lighten-2">@p.Category.Name</a></span>
+                                <span class="secondary-content grey-text lighten-2">@p.PublishedDateTime</span>
+                            </div>
+                            <h4>@p.Title</h4>
+                            <p>@Html.Raw(p.Content)</p>
+                        </div>
+                        <ul class="collapsible panel-collapse z-depth-1">
+                            <li class="@((Model.PostToOpen == p.Id) ? "active" : "")">
+                                <div class="collapsible-header"><i class="material-icons">message</i>Open Comments</div>
+                                <div class="collapsible-body">
+                                    <span>
+                                        @foreach (var comment in p.Comments)
+                                        {
+                                            <ul class="collection" id="comment:@comment.Id">
+                                                <li class="collection-item" style="border-bottom: 1px solid #e0e0e0;">
+                                                    <span class="title teal-text lighten-2">@comment.User.UserName</span>
+                                                    <span class="secondary-content grey-text lighten-2">@comment.DateTime</span>
+                                                    <p>
+                                                        @comment.Text
+                                                    </p>
+                                                </li>
+                                            </ul>
+                                        }
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <form autocomplete="false" asp-action="CreateComment" asp-controller="Post" method="post">
+                                                <input autocomplete="false" name="hidden" type="text" style="display: none;">
+                                                <div class="input-field">
+                                                    <input type="hidden" name="postId" value="@p.Id"/>
+                                                    <input type="hidden" name="categoryId" value="@ViewContext.HttpContext.Request.Query["categoryId"]"/>
+                                                    <input type="hidden" name="postPage" value="@Model.PagingInfo.CurrentPage"/>
+                                                    <textarea id="textarea2" name="text" class="materialize-textarea" data-length="120"></textarea>
+                                                    <label for="textarea2">Your comment...</label>
+                                                    <button id="sendButton" class="btn waves-effect waves-light teal lighten-2" type="submit" name="action">
+                                                        Submit
+                                                        <i class="material-icons right">send</i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <div class="row center-align grey-text">
+                                                To add a comment
+                                                <a class="teal-text lighten-2" id="login" style="display: inline">Log in</a> or
+                                                <a class="teal-text lighten-2" id="signUp" style="display: inline">Sign up</a>
+                                            </div>
+                                        }
+                                    </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <ul page-model="@Model.PagingInfo" page-action="List" page-classes-enable="true" class="pagination" page-category-id="@ViewContext.HttpContext.Request.Query["categoryId"]" page-class-selected="active cyan darken-4" page-class-normal="waves-effect">
+    </ul>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded',
+        function() {
+            var elems = document.querySelectorAll('.collapsible');
+            var instances = M.Collapsible.init(elems, null);
+        });
+
+    function goToByScroll(id) {
+        $('html,body').animate({ scrollTop: $("#" + id).offset().top }, 'fast');
+    }
+
+    $(document).ready(function() {
+        $('input#input_text, textarea#textarea2').characterCounter();
+    });
+</script>
